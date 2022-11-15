@@ -24,16 +24,21 @@ export const SelectOperators = () => {
             {!hasStartedPlaying &&
                 <div>
                     <div className='operator-container'>
-                        <div className="operator " onClick={(e) => addOperator(e)}>+
+                        <div className='operator-list'>
+
+                            <div className="operator " onClick={(e) => addOperator(e)}>+
+                            </div>
+                            <div className="operator" onClick={(e) => addOperator(e)}>-
+                            </div>
+                            <div className="operator" onClick={(e) => addOperator(e)}>*
+                            </div>
+                            <div className="operator" onClick={(e) => addOperator(e)}>/
+                            </div>
                         </div>
-                        <div className="operator" onClick={(e) => addOperator(e)}>-
-                        </div>
-                        <div className="operator" onClick={(e) => addOperator(e)}>*
-                        </div>
-                        <div className="operator" onClick={(e) => addOperator(e)}>/
-                        </div>
+
+                        <button className="start-game" onClick={() => startGame()}>Start Game</button>
                     </div>
-                    <div ><button onClick={() => startGame()}>Start Game</button></div>
+
                 </div>
             }
             {hasStartedPlaying && <Game operators={operators} />}

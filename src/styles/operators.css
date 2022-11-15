@@ -7,21 +7,25 @@
 .operator-container{
     display: flex;
     align-items: center;
-    margin: 200px 250px;
     justify-content: center;
-    flex-direction: row;
+    flex-direction: column;
     height: 80vh;
 }
-.operator{
-    border: 0.2rem solid #212121;
-    cursor: pointer;
-    font-size: 2rem;
-    margin: 0 1rem;
-    min-width: 8rem;
-    padding: 50px;
-    text-align: center;
+.operator-list{
+    display: flex;
 }
-
+.operator{
+    padding: 2rem;
+    border: 2px solid black;
+    margin: 1rem;
+    font-size: 2rem;
+}
+.start-game{
+    margin-top: 2rem;
+    padding: 10px;
+    background-color: black;
+    color:white
+}
 .selected{
     background-color: aqua;
     position: absolute;
