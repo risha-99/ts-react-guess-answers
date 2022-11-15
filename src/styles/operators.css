@@ -1,0 +1,28 @@
+*{
+    box-sizing: border-box;
+    margin:0px;
+    padding:0px;
+}
+
+.operator-container{
+    display: flex;
+    align-items: center;
+    margin: 200px 250px;
+    justify-content: center;
+    flex-direction: row;
+    height: 80vh;
+}
+.operator{
+    border: 0.2rem solid #212121;
+    cursor: pointer;
+    font-size: 2rem;
+    margin: 0 1rem;
+    min-width: 8rem;
+    padding: 50px;
+    text-align: center;
+}
+
+.selected{
+    background-color: aqua;
+    position: absolute;
+}
