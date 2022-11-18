@@ -2,17 +2,62 @@ import { BaseSyntheticEvent, useState } from 'react';
 import '../styles/operators.css';
 import { Game } from './game';
 
+export interface Operation {
+    name: string;
+    operatorSymbol: OperatorSymbol;
+    operate(a: number, b: number): number;
+}
+
+export type OperatorSymbol = '+' | '-' | '*' | '/';
+
+const allOperations: Operation[] = [
+    {
+        name: 'Add',
+        operatorSymbol: '+',
+        operate: (a, b) => {
+            return a + b;
+        }
+    },
+    {
+        name: 'Subtract',
+        operatorSymbol: '-',
+        operate: (a, b) => {
+            return a - b;
+        }
+    },
+    {
+        name: 'Multiple',
+        operatorSymbol: '*',
+        operate: (a, b) => {
+            return a * b;
+        }
+    },
+    {
+        name: 'Devide',
+        operatorSymbol: '/',
+        operate: (a, b) => {
+            return a / b;
+        }
+    }
+]
+
 export const SelectOperators = () => {
-    const [operators, setOperators] = useState<string[]>([]);
+    const [operations, setOperations] = useState<Operation[]>([]);
     const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
 
-    const addOperator = (e: BaseSyntheticEvent) => {
-        let addOperator: string[] = [...operators];
-        if (!addOperator.includes(e.target.innerHTML)) {
-            addOperator.push(e.target.innerHTML);
-            e.target.style.backgroundColor = 'blue';
-        }
-        setOperators(addOperator);
+    const addOperation = (e: BaseSyntheticEvent, operatorSymbol: OperatorSymbol) => {
+
+        setOperations((existingOperations) => {
+            if (!existingOperations.find(operation => operation.operatorSymbol === operatorSymbol)) {
+                const toAddOperation = allOperations.find(alloperation => alloperation.operatorSymbol === operatorSymbol);
+                if (toAddOperation) {
+                    e.target.style.backgroundColor = 'blue';
+                    return [...existingOperations, toAddOperation];
+                }
+                return [...existingOperations];
+            }
+            return [...existingOperations];
+        })
     }
 
     const startGame = () => {
@@ -20,19 +65,18 @@ export const SelectOperators = () => {
     }
     return (
         <>
-
             {!hasStartedPlaying &&
                 <div>
                     <div className='operator-container'>
                         <div className='operator-list'>
 
-                            <div className="operator " onClick={(e) => addOperator(e)}>+
+                            <div className="operator " onClick={(e) => addOperation(e, '+')}>+
                             </div>
-                            <div className="operator" onClick={(e) => addOperator(e)}>-
+                            <div className="operator" onClick={(e) => addOperation(e, '-')}>-
                             </div>
-                            <div className="operator" onClick={(e) => addOperator(e)}>*
+                            <div className="operator" onClick={(e) => addOperation(e, '*')}>*
                             </div>
-                            <div className="operator" onClick={(e) => addOperator(e)}>/
+                            <div className="operator" onClick={(e) => addOperation(e, '/')}>/
                             </div>
                         </div>
 
@@ -41,7 +85,7 @@ export const SelectOperators = () => {
 
                 </div>
             }
-            {hasStartedPlaying && <Game operators={operators} />}
+            {hasStartedPlaying && <Game operations={operations} />}
         </>
     )
 }
