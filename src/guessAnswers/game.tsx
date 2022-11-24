@@ -17,11 +17,12 @@ enum GameState {
 }
 export const Game = (props: { operations: Operation[] }) => {
     const [operation, setOperation] = useState<Operation | null>(null);
-    const [time, setTime] = useState<Time>({ minutes: 0, seconds: 5 });
+    const [time, setTime] = useState<Time>({ minutes: 0, seconds: 8 });
     const [timeOut, setTimeOut] = useState<boolean>(false);
     const [randNum, setRandNum] = useState<RandomNumbers>({ firstNumber: 0, secondNumber: 0 });
     const [options, setOptions] = useState<number[]>([]);
     const [gameState, setGameState] = useState(GameState.PLAYING);
+    const [countQuestion, setCountQuestion] = useState<number>(1);
 
     useEffect(() => {
         initGame();
@@ -61,28 +62,49 @@ export const Game = (props: { operations: Operation[] }) => {
         }
     });
 
+    /** Generate random operation */
     const generateRandomOperation = (): Operation => {
         let randomOperation = Math.floor(Math.random() * props.operations.length)
         return props.operations[randomOperation];
     }
 
+    const generateRandomInRange = () => {
+        return countQuestion <= 10 ? Math.floor(Math.random() * 10) : Math.floor(Math.random() * 50);
+    }
+
+    /* Generate Random first and Second number */
     const generateRandomNumbers = (): RandomNumbers => {
+        const randomNumber = generateRandomInRange();
         return {
-            firstNumber: Math.floor(Math.random() * 10),
-            secondNumber: Math.floor(Math.random() * 10)
+            firstNumber: Math.floor(randomNumber),
+            secondNumber: Math.floor(randomNumber)
         }
     }
+
+    /** Generate correct answer */
     const getCorrectAnswer = (operation: Operation, firstNumber: number, secondNumber: number): number => {
         return operation.operate(firstNumber, secondNumber);
     }
 
+    /** Generate an array with pair of random number and correct answer */
     const getOptions = (firstNumber: number, secondNumber: number, operation: Operation): number[] => {
         const result = getCorrectAnswer(operation, firstNumber, secondNumber);
-        return shuffleArray([Math.floor(Math.random() * 10), result])
+        const randomNumber = generateRandomInRange();
+        return shuffleArray([randomNumber, result])
     }
+    
+    /** Handle user click for answer guess */
     const handleAnswer = (option: number) => {
         if (gameState !== GameState.OVER && option === getCorrectAnswer(operation!, randNum.firstNumber, randNum.secondNumber)) {
-            setTime({ minutes: 0, seconds: 5 });
+            setCountQuestion((prevCount) => prevCount + 1);
+            if (countQuestion < 10) {
+                setTime({ minutes: 0, seconds: 8 });
+            }
+            else if (countQuestion >= 10 && countQuestion <= 20) {
+                setTime({ minutes: 0, seconds: 6 });
+            } else {
+                setTime({ minutes: 0, seconds: 3 });
+            }
             initGame();
         } else {
             setTime({ minutes: 0, seconds: 0 });
