@@ -6,24 +6,35 @@ interface Time {
     minutes: number,
     seconds: number
 }
+interface RandomNumbers {
+    firstNumber: number,
+    secondNumber: number
+}
 
+enum GameState {
+    PLAYING,
+    OVER
+}
 export const Game = (props: { operations: Operation[] }) => {
     const [operation, setOperation] = useState<Operation | null>(null);
     const [time, setTime] = useState<Time>({ minutes: 0, seconds: 5 });
     const [timeOut, setTimeOut] = useState<boolean>(false);
-    const [firstNumber, setFirstNumber] = useState<number>(0);
-    const [secondNumber, setSecondNumber] = useState<number>(0);
+    const [randNum, setRandNum] = useState<RandomNumbers>({ firstNumber: 0, secondNumber: 0 });
     const [options, setOptions] = useState<number[]>([]);
+    const [gameState, setGameState] = useState(GameState.PLAYING);
 
     useEffect(() => {
-        const generatedOperation = generateRandomOperation();
-        setOperation(generatedOperation);
-        generateRandomNumbers();
+        initGame();
     }, [])
 
-    useEffect(() => {
-        initOptions();
-    }, [operation, firstNumber, secondNumber]);
+    const initGame = () => {
+        const generatedOperation = generateRandomOperation();
+        const generatedNumber = generateRandomNumbers();
+        const options = getOptions(generatedNumber.firstNumber, generatedNumber.secondNumber, generatedOperation);
+        setOperation(generatedOperation);
+        setRandNum(generatedNumber);
+        setOptions(options);
+    }
 
     useEffect(() => {
         let interval = setInterval(() => {
@@ -55,37 +66,41 @@ export const Game = (props: { operations: Operation[] }) => {
         return props.operations[randomOperation];
     }
 
-    const generateRandomNumbers = () => {
-        setFirstNumber(Math.floor(Math.random() * 10));
-        setSecondNumber(Math.floor(Math.random() * 10));
-    }
-    const calculatedValue = (): number | undefined => {
-        return operation?.operate(firstNumber, secondNumber);
-    }
-
-    const initOptions = (): void => {
-        const result = calculatedValue();
-        if (result) {
-            setOptions(shuffleArray([Math.floor(Math.random() * 10), result]));
+    const generateRandomNumbers = (): RandomNumbers => {
+        return {
+            firstNumber: Math.floor(Math.random() * 10),
+            secondNumber: Math.floor(Math.random() * 10)
         }
     }
-    const handleAnswer = () => {
-        const generatedOperation = generateRandomOperation();
-        setOperation(generatedOperation);
-        generateRandomNumbers();
-        setTime({ minutes: 0, seconds: 5 });
+    const getCorrectAnswer = (operation: Operation, firstNumber: number, secondNumber: number): number => {
+        return operation.operate(firstNumber, secondNumber);
+    }
+
+    const getOptions = (firstNumber: number, secondNumber: number, operation: Operation): number[] => {
+        const result = getCorrectAnswer(operation, firstNumber, secondNumber);
+        return shuffleArray([Math.floor(Math.random() * 10), result])
+    }
+    const handleAnswer = (option: number) => {
+        if (gameState !== GameState.OVER && option === getCorrectAnswer(operation!, randNum.firstNumber, randNum.secondNumber)) {
+            setTime({ minutes: 0, seconds: 5 });
+            initGame();
+        } else {
+            setTime({ minutes: 0, seconds: 0 });
+            setGameState(GameState.OVER);
+        }
     }
     return (<>
         <div className="game-container">
             <div className="clock" > {time.minutes} : {time.seconds} <br />{timeOut && 'Time Out'}</div>
             <div className="number-container">
-                <div className="number-box" > {firstNumber}</div>
+                <div className="number-box" > {randNum.firstNumber}</div>
                 <span className="operator-style">{operation?.operatorSymbol}</span>
-                <div className="number-box"> {secondNumber}</div>
+                <div className="number-box"> {randNum.secondNumber}</div>
             </div>
+            {gameState === GameState.OVER ? <h1>Game Over</h1> : ''}
             <div className="result">
                 {options.map((option, index) => (
-                    <div className="" onClick={handleAnswer} key={index}>{option}</div>
+                    <div className="" onClick={() => handleAnswer(option)} key={index}>{option}</div>
                 ))}
             </div>
         </div>
