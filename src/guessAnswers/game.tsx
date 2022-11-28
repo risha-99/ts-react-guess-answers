@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { QuestionState } from "../reducers/questionCounterReducer";
+import { GameState } from "../enums/GameState";
+import { QuestionState } from "../interfaces/QuestionState";
+import { RandomNumbers } from "../interfaces/RandomNumbers";
+import { Time } from "../interfaces/Time";
 import '../styles/game.css';
 import { shuffleArray } from "../utilities/array-shuffle";
 import { Operation } from "./selectOperators";
-interface Time {
-    minutes: number,
-    seconds: number
-}
-interface RandomNumbers {
-    firstNumber: number,
-    secondNumber: number
-}
 
-enum GameState {
-    PLAYING,
-    OVER
-}
 export const Game = (props: { operations: Operation[] }) => {
     const [operation, setOperation] = useState<Operation | null>(null);
     const [time, setTime] = useState<Time>({ minutes: 0, seconds: 8 });
@@ -25,7 +16,7 @@ export const Game = (props: { operations: Operation[] }) => {
     const [randNum, setRandNum] = useState<RandomNumbers>({ firstNumber: 0, secondNumber: 0 });
     const [options, setOptions] = useState<number[]>([]);
     const [gameState, setGameState] = useState(GameState.PLAYING);
-    const questionCount:any = useSelector<QuestionState>((state) => state.questionCount);
+    const questionCount: any = useSelector<QuestionState>((state) => state.questionCount);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -100,7 +91,7 @@ export const Game = (props: { operations: Operation[] }) => {
     /** Handle user click for answer guess */
     const handleAnswer = (option: number) => {
         if (gameState !== GameState.OVER && option === getCorrectAnswer(operation!, randNum.firstNumber, randNum.secondNumber)) {
-            dispatch({type:'ADD_QUESTION' , payload: '1'});
+            dispatch({ type: 'ADD_QUESTION', payload: '1' });
             if (questionCount < 10) {
                 setTime({ minutes: 0, seconds: 8 });
             }

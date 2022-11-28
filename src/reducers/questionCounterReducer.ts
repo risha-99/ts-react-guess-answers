@@ -1,14 +1,15 @@
-export interface QuestionState {
-  questionCount: number;
-}
+import { Performance } from "../enums/Performance";
+import { ActionType, QuestionState } from "../interfaces/QuestionState";
+
 const initialState: QuestionState = {
   questionCount: 0,
+  score: {
+    scoreCount: 0,
+    performance: Performance["Below Expectation"],
+    status: "Online",
+  },
 };
 
-interface ActionType {
-  type: "ADD_QUESTION";
-  payload: string;
-}
 export const questionCounterReducer = ( state = initialState, action: ActionType): QuestionState => {
   switch (action.type) {
     case "ADD_QUESTION": {
