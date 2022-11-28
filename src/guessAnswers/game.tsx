@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { QuestionState } from "../reducers/questionCounterReducer";
 import '../styles/game.css';
 import { shuffleArray } from "../utilities/array-shuffle";
 import { Operation } from "./selectOperators";
@@ -22,7 +25,8 @@ export const Game = (props: { operations: Operation[] }) => {
     const [randNum, setRandNum] = useState<RandomNumbers>({ firstNumber: 0, secondNumber: 0 });
     const [options, setOptions] = useState<number[]>([]);
     const [gameState, setGameState] = useState(GameState.PLAYING);
-    const [countQuestion, setCountQuestion] = useState<number>(1);
+    const questionCount:any = useSelector<QuestionState>((state) => state.questionCount);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         initGame();
@@ -69,7 +73,7 @@ export const Game = (props: { operations: Operation[] }) => {
     }
 
     const generateRandomInRange = () => {
-        return countQuestion <= 10 ? Math.floor(Math.random() * 10) : Math.floor(Math.random() * 50);
+        return questionCount <= 10 ? Math.floor(Math.random() * 10) : Math.floor(Math.random() * 50);
     }
 
     /* Generate Random first and Second number */
@@ -92,16 +96,16 @@ export const Game = (props: { operations: Operation[] }) => {
         const randomNumber = generateRandomInRange();
         return shuffleArray([randomNumber, result])
     }
-    
+
     /** Handle user click for answer guess */
     const handleAnswer = (option: number) => {
         if (gameState !== GameState.OVER && option === getCorrectAnswer(operation!, randNum.firstNumber, randNum.secondNumber)) {
-            setCountQuestion((prevCount) => prevCount + 1);
-            if (countQuestion < 10) {
+            dispatch({type:'ADD_QUESTION' , payload: '1'});
+            if (questionCount < 10) {
                 setTime({ minutes: 0, seconds: 8 });
             }
-            else if (countQuestion >= 10 && countQuestion <= 20) {
-                setTime({ minutes: 0, seconds: 6 });
+            else if (questionCount >= 10 && questionCount <= 20) {
+                setTime({ minutes: 0, seconds: 5 });
             } else {
                 setTime({ minutes: 0, seconds: 3 });
             }
@@ -120,6 +124,7 @@ export const Game = (props: { operations: Operation[] }) => {
                 <div className="number-box"> {randNum.secondNumber}</div>
             </div>
             {gameState === GameState.OVER ? <h1>Game Over</h1> : ''}
+            Question Count : {questionCount}
             <div className="result">
                 {options.map((option, index) => (
                     <div className="" onClick={() => handleAnswer(option)} key={index}>{option}</div>
