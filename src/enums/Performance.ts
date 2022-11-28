@@ -1,7 +1,6 @@
 export enum Performance {
-    "Excellent",
-    "Good",
-    "Average",
-    "Below Expectation",
-  }
-  
+  Excellent = "Excellent",
+  Good = "Good",
+  Average = "Average",
+  Below_Expectation = "Below Expectation",
+}

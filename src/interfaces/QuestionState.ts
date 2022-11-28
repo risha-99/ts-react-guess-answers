@@ -1,3 +1,4 @@
+import { ActionTypes } from "../enums/ActionType";
 import { Performance } from "../enums/Performance";
 
 export interface QuestionState {
@@ -8,7 +9,8 @@ export interface QuestionState {
     status: string;
   };
 }
-export interface ActionType {
-  type: "ADD_QUESTION";
+
+export interface Action {
+  type: ActionTypes;
   payload: string;
 }

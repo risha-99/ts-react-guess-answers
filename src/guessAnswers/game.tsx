@@ -10,6 +10,7 @@ import { shuffleArray } from "../utilities/array-shuffle";
 import { Operation } from "./selectOperators";
 
 export const Game = (props: { operations: Operation[] }) => {
+    const performance = useSelector<QuestionState>((state) => state.score.performance)
     const [operation, setOperation] = useState<Operation | null>(null);
     const [time, setTime] = useState<Time>({ minutes: 0, seconds: 8 });
     const [timeOut, setTimeOut] = useState<boolean>(false);
@@ -104,6 +105,7 @@ export const Game = (props: { operations: Operation[] }) => {
         } else {
             setTime({ minutes: 0, seconds: 0 });
             setGameState(GameState.OVER);
+            dispatch({ type: "PERFORMANCE_STATUS", payload: questionCount });
         }
     }
     return (<>
@@ -114,7 +116,7 @@ export const Game = (props: { operations: Operation[] }) => {
                 <span className="operator-style">{operation?.operatorSymbol}</span>
                 <div className="number-box"> {randNum.secondNumber}</div>
             </div>
-            {gameState === GameState.OVER ? <h1>Game Over</h1> : ''}
+            {gameState === GameState.OVER ? <h1 > <>Game Over with Performance:  {performance}</></h1> : ''}
             Question Count : {questionCount}
             <div className="result">
                 {options.map((option, index) => (

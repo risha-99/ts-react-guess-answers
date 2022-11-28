@@ -1,0 +1,4 @@
+export enum ActionTypes {
+  ADD_QUESTION = "ADD_QUESTION",
+  PERFORMANCE_STATUS = "PERFORMANCE_STATUS",
+}
